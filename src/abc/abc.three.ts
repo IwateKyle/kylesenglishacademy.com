@@ -2,9 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
-import { Mesh } from 'three'
-// import typefaceFont from '../assets/fonts/helvetiker_regular.typeface.json'
+import { Mesh, MeshBasicMaterial } from 'three'
 
 export default function (canvas: HTMLCanvasElement) {
 
@@ -35,21 +33,26 @@ export default function (canvas: HTMLCanvasElement) {
     const textureLoader = new THREE.TextureLoader()
     const matcapTexture = textureLoader.load('/src/assets/textures/matcaps/8.png')
 
-
-    // Objects
-    // const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 'red' }))
-    // scene.add(cube)
-
-
     // Material
-    const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
+    // const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
     const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 32, 64)
 
     const alphabetGeometry: TextGeometry[] = []
     const alphabetMesh: Mesh[] = []
+    const red = new MeshBasicMaterial({ color: 'red' })
+    const green = new MeshBasicMaterial({ color: 'green' })
+    const yellow = new MeshBasicMaterial({ color: 'yellow' })
+    const blue = new MeshBasicMaterial({ color: 'blue' })
+    const pink = new MeshBasicMaterial({ color: 'pink' })
+    const white = new MeshBasicMaterial({ color: '#eee' })
+    const alphabetColors: MeshBasicMaterial[] = [
+        red, green, yellow, blue, pink
+    ]
+
     // Text
     const fontLoader = new FontLoader()
+
     fontLoader.load(
         '/src/assets/fonts/helvetiker_regular.typeface.json',
         (font) => {
@@ -69,7 +72,7 @@ export default function (canvas: HTMLCanvasElement) {
             )
             textGeometry.center()
 
-            const text = new THREE.Mesh(textGeometry, material)
+            const text = new THREE.Mesh(textGeometry, white)
             scene.add(text)
 
             for (let char = 'a'.charCodeAt(0); char <= 'z'.charCodeAt(0); char++) {
@@ -89,10 +92,10 @@ export default function (canvas: HTMLCanvasElement) {
 
             for (let i = 0; i < 1000; i++) {
                 const randomElement = Math.floor(Math.random() * alphabetGeometry.length)
-                console.log(randomElement);
-                
+                const randomColor = Math.floor(Math.random() * alphabetColors.length)
+
                 // alphabetGeometry.forEach(textGeometry => {
-                const letter = new THREE.Mesh(alphabetGeometry[randomElement], material)
+                const letter = new THREE.Mesh(alphabetGeometry[randomElement], alphabetColors[randomColor])
                 letter.position.x = (Math.random() - 0.5) * 100
                 letter.position.y = (Math.random() - 0.5) * 100
                 letter.position.z = (Math.random() - 0.5) * 100
@@ -103,66 +106,48 @@ export default function (canvas: HTMLCanvasElement) {
                 scene.add(letter)
             };
 
-    // // Donuts
-    // for (let i = 0; i < 0; i++) {
-
-    //     const donut = new THREE.Mesh(donutGeometry, material)
-    //     donut.position.x = (Math.random() - 0.5) * 200
-    //     donut.position.y = (Math.random() - 0.5) * 200
-    //     donut.position.z = (Math.random() - 0.5) * 200
-    //     donut.rotation.x = Math.random() * Math.PI
-    //     donut.rotation.y = Math.random() * Math.PI
-    //     const scale = Math.random()
-    //     donut.scale.set(scale, scale, scale)
-
-    //     alphabet.push({
-    //         donut,
-    //     })
-    //     scene.add(donut)
-    // }
-
-}
-    )
-
-const createLetterGeometry = (font: Font, letter: string): TextGeometry => {
-    const textGeometry = new TextGeometry(
-        letter,
-        {
-            font,
-            size: 2.0,
-            height: 0.2,
-            curveSegments: 12,
-            bevelEnabled: true,
-            bevelThickness: 0.03,
-            bevelSize: 0.02,
-            bevelOffset: 0,
-            bevelSegments: 5
         }
     )
-    return textGeometry
-}
 
-// Clock
-const clock = new THREE.Clock()
+    const createLetterGeometry = (font: Font, letter: string): TextGeometry => {
+        const textGeometry = new TextGeometry(
+            letter,
+            {
+                font,
+                size: 2.0,
+                height: 0.2,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            }
+        )
+        return textGeometry
+    }
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({ canvas })
-renderer.setSize(width, height)
+    // Clock
+    const clock = new THREE.Clock()
 
-// Animations
-const tick = () => {
-    const delta = clock.getDelta()
-    control.update()
-    alphabetMesh.forEach(mesh => {
-       mesh.rotation.y += ( 0.5 * delta) 
-       mesh.rotation.z += ( 0.5 * delta) 
-    });
-    renderer.render(scene, camera)
-    requestAnimationFrame(tick)
-}
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas })
+    renderer.setSize(width, height)
 
-// Run
-clock.start()
-tick()
+    // Animations
+    const tick = () => {
+        const delta = clock.getDelta()
+        control.update()
+        alphabetMesh.forEach(mesh => {
+            mesh.rotation.y += (0.5 * delta)
+            mesh.rotation.z += (0.5 * delta)
+        });
+        renderer.render(scene, camera)
+        requestAnimationFrame(tick)
+    }
+
+    // Run
+    clock.start()
+    tick()
 
 }

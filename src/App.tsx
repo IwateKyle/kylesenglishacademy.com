@@ -8,7 +8,7 @@ const App: Component = () => {
     <>
       <MainHeader />
       <ABC3D></ABC3D>
-      <DefaultApp />
+      {/* <DefaultApp /> */}
     </>
   );
 };
