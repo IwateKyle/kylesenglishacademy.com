@@ -28,11 +28,12 @@ export default function (canvas: HTMLCanvasElement) {
     scene.add(camera)
 
     // Lights
-    // const ambientLight = new THREE.AmbientLight(0x404040, 1)
-    const pointLight = new THREE.PointLight(0xffffff, 2, 800);
+    const ambientLight = new THREE.AmbientLight(0x404040, 1)
+    // const ambientLight = new THREE.AmbientLight()
+    const pointLight = new THREE.PointLight(0xcccccc, 2, 500);
     pointLight.position.z = -5
     pointLight.position.y = 5
-    // scene.add(ambientLight)
+    scene.add(ambientLight)
     scene.add(pointLight)
 
     // Events
