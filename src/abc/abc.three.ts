@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import { Mesh, MeshBasicMaterial } from 'three'
+import { Material, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshToonMaterial } from 'three'
 // import typefaceFont from '../fonts/helvetiker_regular.typeface.json?url'
 import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json?url'
 import png8 from '../assets/textures/matcaps/8.png?url'
@@ -16,15 +16,24 @@ export default function (canvas: HTMLCanvasElement) {
     const width = window.innerWidth
     const height = window.innerHeight * 0.5
     const aspectRatio = width / height
-    const FOV = 75
+    const FOV = 40
 
     // Scene
     const scene = new THREE.Scene()
+    scene.background = new THREE.Color('skyblue')
 
     // Camera
     const camera = new THREE.PerspectiveCamera(FOV, aspectRatio)
     camera.position.z = 5
     scene.add(camera)
+
+    // Lights
+    // const ambientLight = new THREE.AmbientLight(0x404040, 1)
+    const pointLight = new THREE.PointLight(0xffffff, 2, 800);
+    pointLight.position.z = -5
+    pointLight.position.y = 5
+    // scene.add(ambientLight)
+    scene.add(pointLight)
 
     // Events
 
@@ -44,13 +53,16 @@ export default function (canvas: HTMLCanvasElement) {
 
     const alphabetGeometry: TextGeometry[] = []
     const alphabetMesh: Mesh[] = []
-    const red = new MeshBasicMaterial({ color: 'red' })
-    const green = new MeshBasicMaterial({ color: 'green' })
-    const yellow = new MeshBasicMaterial({ color: 'yellow' })
-    const blue = new MeshBasicMaterial({ color: 'blue' })
-    const pink = new MeshBasicMaterial({ color: 'pink' })
-    const white = new MeshBasicMaterial({ color: '#eee' })
-    const alphabetColors: MeshBasicMaterial[] = [
+    // const MyMaterial = MeshBasicMaterial
+    const MyMaterial = MeshToonMaterial
+    const red = new MyMaterial({ color: 'red' })
+    const green = new MyMaterial({ color: 'green' })
+    const yellow = new MyMaterial({ color: 'yellow' })
+    const blue = new MyMaterial({ color: 'blue' })
+    const pink = new MyMaterial({ color: 0xFF69B4})
+    const white = new MyMaterial({ color: '#eee' })
+    const gray = new MyMaterial({ color: 'darkgray' })
+    const alphabetMaterials = [
         red, green, yellow, blue, pink
     ]
 
@@ -76,7 +88,7 @@ export default function (canvas: HTMLCanvasElement) {
             )
             textGeometry.center()
 
-            const text = new THREE.Mesh(textGeometry, white)
+            const text = new THREE.Mesh(textGeometry, pink)
             scene.add(text)
 
             for (let char = 'a'.charCodeAt(0); char <= 'z'.charCodeAt(0); char++) {
@@ -96,10 +108,10 @@ export default function (canvas: HTMLCanvasElement) {
 
             for (let i = 0; i < 1000; i++) {
                 const randomElement = Math.floor(Math.random() * alphabetGeometry.length)
-                const randomColor = Math.floor(Math.random() * alphabetColors.length)
+                const randomColor = Math.floor(Math.random() * alphabetMaterials.length)
 
                 // alphabetGeometry.forEach(textGeometry => {
-                const letter = new THREE.Mesh(alphabetGeometry[randomElement], alphabetColors[randomColor])
+                const letter = new THREE.Mesh(alphabetGeometry[randomElement], alphabetMaterials[randomColor])
                 letter.position.x = (Math.random() - 0.5) * 100
                 letter.position.y = (Math.random() - 0.5) * 100
                 letter.position.z = (Math.random() - 0.5) * 100
