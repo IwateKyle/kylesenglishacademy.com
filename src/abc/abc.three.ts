@@ -3,6 +3,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Mesh, MeshBasicMaterial } from 'three'
+// import typefaceFont from '../fonts/helvetiker_regular.typeface.json?url'
+import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json?url'
+import png8 from '../assets/textures/matcaps/8.png?url'
 
 export default function (canvas: HTMLCanvasElement) {
 
@@ -31,7 +34,8 @@ export default function (canvas: HTMLCanvasElement) {
 
     // Textures
     const textureLoader = new THREE.TextureLoader()
-    const matcapTexture = textureLoader.load('/src/assets/textures/matcaps/8.png')
+    // const matcapTexture = textureLoader.load('/assets/textures/matcaps/8.png')
+    const matcapTexture = textureLoader.load(png8)
 
     // Material
     // const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
@@ -54,7 +58,7 @@ export default function (canvas: HTMLCanvasElement) {
     const fontLoader = new FontLoader()
 
     fontLoader.load(
-        '/src/assets/fonts/helvetiker_regular.typeface.json',
+        typefaceFont,
         (font) => {
             const textGeometry = new TextGeometry(
                 "Kyle's English Academy",
